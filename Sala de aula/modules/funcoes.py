@@ -1,5 +1,139 @@
 from . import systems
 
+def cadastraAluno(d: dict) -> None:
+    """ 1 - Cadastra o aluno e a sua nota """
+    cont_alunos = 0
+
+    for _ in d:
+        cont_alunos += 1
+
+    print(cont_alunos)
+    if cont_alunos < 10:
+        nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO: ")
+
+        if nm_aluno in d.keys():
+            print("\nNOME JÁ EXISTENTE, DESEJA SOBREPOR?")
+            intencao = verificaIntencao()
+
+            if intencao:
+                cadastraNota(d, nm_aluno)
+        else:
+            cadastraNota(d, nm_aluno)
+    else:
+        print("LIMITE DE ALUNOS EXCEDIDO!")
+
+def editarAluno(d: dict) -> None:
+    """ 2 - Edita o aluno """
+    def acao_se_nao_vazio():
+        listarAlunos(d)
+
+        nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA EDITAR: ")
+
+        if nm_aluno in d:
+            print("\nDESEJA MUDAR O NOME DO ALUNO?")
+            intencao = verificaIntencao()
+
+            if intencao:
+                novo_nome = inputNomeAluno("\nDIGITE O NOVO NOME DO ALUNO: ")
+                atualizaChave(d, nm_aluno, novo_nome)
+                cadastraNota(d, novo_nome)
+            else:
+                cadastraNota(d, nm_aluno)
+        else:
+            print(f"\nO ALUNO {nm_aluno} NÃO ESTÁ REGISTRADO, DESEJA CADASTRÁ-LO, TENTAR NOVAMENTE OU ENCERRAR A AÇÃO?")
+            verificaIntencao(d, lambda dict: cadastraNota(dict, nm_aluno), editarAluno)
+
+    def acao_se_vazio():
+        print("NÃO HÁ ALUNOS REGISTRADOS PARA EDIÇÃO")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+def listarAlunos(d: dict) -> None:
+    """ 3 - Lista os alunos """
+    def acao_se_nao_vazio():
+        num_tabs = 4
+        print("\nALUNOS" + "\t" * num_tabs + "NOTAS")
+        print("=" * 40)
+        for nome, nota in d.items():
+            print(f"{nome}" + "\t" * num_tabs + f"{nota}")
+        print("=" * 40)
+
+    def acao_se_vazio():
+        print("\nNÃO HÁ ALUNOS REGISTRADOS PARA EXIBIÇÃO")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+def excluirAluno(d: dict) -> None:
+    """ 4 - Exclui os alunos """
+    def acao_se_nao_vazio():
+        print("DESEJA REALMENTE EXCLUIR UM ALUNO?")
+        intencao = verificaIntencao()
+
+        if intencao:
+            listarAlunos(d)
+            nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA EXCLUIR: ")
+
+            if nm_aluno in d:
+                del d[nm_aluno]
+                print(f"\nO(A) ALUNO(A) {nm_aluno} FOI EXCLUÍDO COM SUCESSO")
+            else:
+                print(f"\nALUNO {nm_aluno} NÃO ENCONTRADO")
+
+    def acao_se_vazio():
+        print("NÃO HÁ ALUNOS REGISTRADOS PARA EXCLUIR")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+def calculaMediaSala(d: dict) -> None:
+    """ 5 - Calcula a média da sala """
+    def acao_se_nao_vazio():
+        media_sala = sum(d.values())/len(d)
+        print(f"MÉDIA DA SALA = {round(media_sala, 1)}")
+
+    def acao_se_vazio():
+        print("NENHUMA NOTA DISPONÍVEL PARA O CÁLCULO DA MÉDIA")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+def consultarAluno(d: dict) -> None:
+    """ 6 - Consulta o aluno indicado """
+    def acao_se_nao_vazio():
+        listarAlunos(d)
+
+        nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA CONSULTAR: ")
+
+        if nm_aluno in d:
+            systems.lineSystem()
+            num_tabs = 4
+            print("\nALUNO" + "\t" * num_tabs + "NOTA")
+            print("=" * 25)
+            print(f"{nm_aluno}" + "\t" * num_tabs + f"{d[nm_aluno]}")
+            print("=" * 25)
+        else:
+            print(f"\nO ALUNO {nm_aluno} NÃO ESTÁ REGISTRADO, DESEJA CADASTRÁ-LO, TENTAR NOVAMENTE OU ENCERRAR A AÇÃO?")
+            verificaIntencao(d, lambda dict: cadastraNota(dict, nm_aluno), consultarAluno)
+
+    def acao_se_vazio():
+        print("NÃO HÁ NENHUM ALUNO REGISTRADO PARA CONSULTA")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+def apagarSala(d: dict) -> None:
+    """ 7 - Deleta a sala """
+    def acao_se_nao_vazio():
+        print("VOCÊ REALMENTE DESEJA EXCLUIR A SALA?")
+        intencao = verificaIntencao()
+
+        if intencao:
+            d.clear()
+            print("\nSALA EXCLUÍDA COM SUCESSO")
+
+    def acao_se_vazio():
+        print("\nNÃO HÁ NENHUMA SALA REGISTRADA PARA EXCLUIR")
+
+    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
+
+# Funções auxiliares
 def verificaNota(n: float) -> float:
     """ Verifica se a nota está entre 0 e 10 """
     if n < 0 or n > 10:
@@ -83,7 +217,7 @@ def verificaIntencao(d: dict = None, func1=None, func2=None) -> bool:
     elif intencao == 'S' and func2:
         func2(d)
     elif intencao == 'N':
-        print("\nAÇÃO ENCERRADA")
+        print("\nAÇÃO INTERROMPIDA")
 
     return intencao == 'S'
 
@@ -103,131 +237,3 @@ def verificaNomeExistente(d: dict, nm_aluno: str) -> bool:
         cadastraNota(d, nm_aluno)
 
     return intencao
-
-def cadastraAluno(d: dict) -> None:
-    """ 1 - Cadastra o aluno e a sua nota """
-    nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO: ")
-
-    if nm_aluno in d.keys():
-        print("\nNOME JÁ EXISTENTE, DESEJA SOBREPOR?")
-        intencao = verificaIntencao()
-
-        if intencao:
-            cadastraNota(d, nm_aluno)
-    else:
-        cadastraNota(d, nm_aluno)
-
-def editarAluno(d: dict) -> None:
-    """ 2 - Edita o aluno """
-    def acao_se_nao_vazio():
-        listarAlunos(d)
-
-        nm_aluno = inputNomeAluno(" DIGITE O NOME DO ALUNO QUE DESEJA EDITAR: ")
-
-        if nm_aluno in d:
-            print("\nDESEJA MUDAR O NOME DO ALUNO?")
-            intencao = verificaIntencao()
-
-            if intencao:
-                novo_nome = inputNomeAluno("\nDIGITE O NOVO NOME DO ALUNO: ")
-                atualizaChave(d, nm_aluno, novo_nome)
-                cadastraNota(d, novo_nome)
-            else:
-                cadastraNota(d, nm_aluno)
-        else:
-            print(f"\nO ALUNO {nm_aluno} NÃO ESTÁ REGISTRADO, DESEJA CADASTRÁ-LO, TENTAR NOVAMENTE OU ENCERRAR A AÇÃO?")
-            verificaIntencao(d, lambda dict: cadastraNota(dict, nm_aluno), editarAluno)
-
-    def acao_se_vazio():
-        print("NÃO HÁ ALUNOS REGISTRADOS PARA EDIÇÃO")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
-
-def listarAlunos(d: dict) -> None:
-    """ 3 - Lista os alunos """
-    def acao_se_nao_vazio():
-        num_tabs = 4
-        print("\nALUNOS" + "\t" * num_tabs + "NOTAS")
-        print("=" * 40)
-        for nome, nota in d.items():
-            print(f"{nome}" + "\t" * num_tabs + f"{nota}")
-        print("=" * 40)
-
-    def acao_se_vazio():
-        print("\nNÃO HÁ ALUNOS REGISTRADOS PARA EXIBIÇÃO")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
-
-def excluirAluno(d: dict) -> None:
-    """ 4 - Exclui os alunos """
-    def acao_se_nao_vazio():
-        print("DESEJA REALMENTE EXCLUIR UM ALUNO?")
-        intencao = verificaIntencao()
-
-        if intencao:
-            listarAlunos(d)
-            nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA EXCLUIR: ")
-
-            if nm_aluno in d:
-                del d[nm_aluno]
-                print(f"\nO(A) ALUNO(A) {nm_aluno} FOI EXCLUÍDO COM SUCESSO")
-            else:
-                print(f"\nALUNO {nm_aluno} NÃO ENCONTRADO")
-        else:
-            print("\nAÇÃO INTERROMPIDA")
-
-    def acao_se_vazio():
-        print("NÃO HÁ ALUNOS REGISTRADOS PARA EXCLUIR")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
-
-def calculaMediaSala(d: dict) -> None:
-    """ 5 - Calcula a média da sala """
-    def acao_se_nao_vazio():
-        media_sala = sum(d.values())/len(d)
-        print(f"MÉDIA DA SALA = {round(media_sala, 1)}")
-
-    def acao_se_vazio():
-        print("NENHUMA NOTA DISPONÍVEL PARA O CÁLCULO DA MÉDIA")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
-
-def consultarAluno(d: dict) -> None:
-    """ 6 - Consulta o aluno indicado """
-    def acao_se_nao_vazio():
-        listarAlunos(d)
-
-        nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA CONSULTAR: ")
-
-        if nm_aluno in d:
-            systems.lineSystem()
-            num_tabs = 4
-            print("\nALUNO" + "\t" * num_tabs + "NOTA")
-            print("=" * 25)
-            print(f"{nm_aluno}" + "\t" * num_tabs + f"{d[nm_aluno]}")
-            print("=" * 25)
-        else:
-            print(f"\nO ALUNO {nm_aluno} NÃO ESTÁ REGISTRADO, DESEJA CADASTRÁ-LO, TENTAR NOVAMENTE OU ENCERRAR A AÇÃO?")
-            verificaIntencao(d, lambda dict: cadastraNota(dict, nm_aluno), consultarAluno)
-
-    def acao_se_vazio():
-        print("NÃO HÁ NENHUM ALUNO REGISTRADO PARA CONSULTA")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)
-
-def apagarSala(d: dict) -> None:
-    """ 7 - Deleta a sala """
-    def acao_se_nao_vazio():
-        print("VOCÊ REALMENTE DESEJA EXCLUIR A SALA?")
-        intencao = verificaIntencao()
-
-        if intencao:
-            d.clear()
-            print("\nSALA EXCLUÍDA COM SUCESSO")
-        else:
-            print("\nAÇÃO INTERROMPIDA")
-
-    def acao_se_vazio():
-        print("\nNÃO HÁ NENHUMA SALA REGISTRADA PARA EXCLUIR")
-
-    verificaDicionarioVazio(d, acao_se_nao_vazio, acao_se_vazio)

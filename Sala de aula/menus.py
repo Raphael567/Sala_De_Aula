@@ -1,16 +1,5 @@
 from modules import enunciados, funcoes, dicionario, systems
 
-def executarAcao(acao_func1, acao_func2=None, *args):
-    systems.lineSystem()
-    acao_func1()
-    acao_func2(*args)
-    systems.pauseSystem()
-
-def executarAcao2(acao_func):
-    systems.lineSystem()
-    acao_func()
-    systems.pauseSystem()
-
 def menuPrincipal(escolha: int) -> None:
     match escolha:
         case 1:
@@ -56,6 +45,7 @@ def menuInformativo() -> None:
                 executarAcao2(enunciados.apresentaApagarSala)
             case "8":
                 executarAcao2(enunciados.apresentaTrocaDeMenu)
+                return
             case "0":
                 systems.lineSystem()
                 enunciados.apresentaEncerrar()
@@ -64,3 +54,14 @@ def menuInformativo() -> None:
                 systems.lineSystem()
                 print("\nOPÇÃO INVÁLIDA! TENTE NOVAMENTE.")
                 systems.pauseSystem()
+
+def executarAcao(acao_func1, acao_func2=None, *args):
+    systems.lineSystem()
+    acao_func1()
+    acao_func2(*args)
+    systems.pauseSystem()
+
+def executarAcao2(acao_func):
+    systems.lineSystem()
+    acao_func()
+    systems.pauseSystem()
