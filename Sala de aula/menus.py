@@ -6,6 +6,11 @@ def executarAcao(acao_func1, acao_func2=None, *args):
     acao_func2(*args)
     systems.pauseSystem()
 
+def executarAcao2(acao_func):
+    systems.lineSystem()
+    acao_func()
+    systems.pauseSystem()
+
 def menuPrincipal(escolha: int) -> None:
     match escolha:
         case 1:
@@ -23,7 +28,8 @@ def menuPrincipal(escolha: int) -> None:
         case 7:
             executarAcao(enunciados.secaoApagarSala, funcoes.apagarSala, dicionario.notas)
         case 8:
-            executarAcao(menuInformativo)
+            executarAcao2(enunciados.apresentaTrocaDeMenu)
+            executarAcao2(menuInformativo)
         case 0:
             systems.lineSystem()
             enunciados.apresentaEncerrar()
@@ -35,22 +41,25 @@ def menuInformativo() -> None:
 
         match escolha:
             case "1":
-                executarAcao(enunciados.apresentaCadastrarAluno)
+                executarAcao2(enunciados.apresentaCadastrarAluno)
             case "2":
-                executarAcao(enunciados.apresentaEditarAluno)
+                executarAcao2(enunciados.apresentaEditarAluno)
             case "3":
-                executarAcao(enunciados.apresentaListarAlunos)
+                executarAcao2(enunciados.apresentaListarAlunos)
             case "4":
-                executarAcao(enunciados.apresentaExcluirAlunos)
+                executarAcao2(enunciados.apresentaExcluirAlunos)
             case "5":
-                executarAcao(enunciados.apresentaCalcularMediaSala)
+                executarAcao2(enunciados.apresentaCalcularMediaSala)
             case "6":
-                executarAcao(enunciados.apresentaConsultarAluno)
+                executarAcao2(enunciados.apresentaConsultarAluno)
             case "7":
-                executarAcao(enunciados.apresentaApagarSala)
+                executarAcao2(enunciados.apresentaApagarSala)
+            case "8":
+                executarAcao2(enunciados.apresentaTrocaDeMenu)
             case "0":
                 systems.lineSystem()
-                return
+                enunciados.apresentaEncerrar()
+                exit()
             case _:
                 systems.lineSystem()
                 print("\nOPÇÃO INVÁLIDA! TENTE NOVAMENTE.")

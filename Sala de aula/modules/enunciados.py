@@ -1,8 +1,8 @@
 def exibirMenuPrincipal() -> str:
     escolha = input("""
-================================
+=================================
 |         MENU PRINCIPAL        |
-================================
+=================================
 | [1] CADASTRAR ALUNO           |
 | [2] EDITAR ALUNO              |
 | [3] LISTAR ALUNOS             |
@@ -18,11 +18,11 @@ SELECIONE UMA OPÇÃO: """)
 
     return escolha
 
-def exibirMenuInformativo() -> str:
+def exibirMenuInformativo():
     escolha = input("""
-================================
+=================================
 |        MENU INFORMATIVO       |
-================================
+=================================
 | [1] CADASTRAR ALUNO           |
 | [2] EDITAR ALUNO              |
 | [3] LISTAR ALUNOS             |
@@ -30,7 +30,8 @@ def exibirMenuInformativo() -> str:
 | [5] CALCULAR A MÉDIA DA SALA  |
 | [6] CONSULTAR ALUNO           |
 | [7] APAGAR SALA               |
-| [0] VOLTAR AO MENU ANTERIOR   |
+| [8] VOLTAR AO MENU ANTERIOR   | 
+| [0] ENCERRAR                  |
 =================================
 
 SELECIONE UMA OPÇÃO: """)
@@ -52,7 +53,7 @@ def apresentaCadastrarAluno():
 def secaoCadastrarAluno():
     print("""
 =================================
-|       [1] CADASTRAR ALUNO     |
+|      [1] CADASTRAR ALUNO      |
 =================================
 """)
 
@@ -165,6 +166,13 @@ def secaoApagarSala():
 =================================
 |       [7] APAGAR SALA         |
 =================================
+""")
+
+def apresentaTrocaDeMenu():
+    print("""
+==================================
+|        [8] TROCAR MENU         |
+==================================
 """)
 
 def apresentaEncerrar():

@@ -1,3 +1,5 @@
+from . import systems
+
 def verificaNota(n: float) -> float:
     """ Verifica se a nota está entre 0 e 10 """
     if n < 0 or n > 10:
@@ -31,10 +33,6 @@ def cadastraNota(d: dict, nome_aluno: str) -> None:
         except ValueError:
             print("\nNOTA INVÁLIDA, DIGITE APENAS NÚMEROS ENTRE 0 E 10")
 
-def verificaAluno(d: dict, nm_aluno: str) -> bool:
-    """ Verifica se o aluno está no dicionário """
-    return nm_aluno in d
-
 def verificaTexto(txt: str, prompt: str = None) -> str:
     """ Verifica se o valor passado é um texto válido """
     while not txt.isalpha() and not txt.replace(' ', '').isalpha():
@@ -43,7 +41,12 @@ def verificaTexto(txt: str, prompt: str = None) -> str:
 
 def formataNome(nome_aluno: str) -> str:
     """ Realiza a padronização de escrita do nome (primeira letra maiúscula) """
-    return nome_aluno.title()
+    palavras = nome_aluno.split()
+    palavra_formatada = []
+    for palavra in palavras:
+        palavra_formatada.append(palavra[0].upper() + palavra[1:].lower())
+    nome_formatado = ' '.join(palavra_formatada)
+    return nome_formatado
 
 def inputNomeAluno(prompt: str) -> str:
     """ Entrada de dados do nome do aluno, com verificação e formatação """
@@ -84,12 +87,22 @@ def verificaIntencao(d: dict = None, func1=None, func2=None) -> bool:
 
     return intencao == 'S'
 
-def verificaDicionarioVazio(d: dict, acao_se_nao_vazio, acao_se_vazio):
+def verificaDicionarioVazio(d: dict, acao_se_nao_vazio, acao_se_vazio) -> None:
     """ Verifica se o dicionário está vazio e executa ações correspondentes """
     if d:
         acao_se_nao_vazio()
     else:
         acao_se_vazio()
+
+def verificaNomeExistente(d: dict, nm_aluno: str) -> bool:
+    intencao = False
+    if nm_aluno in d.keys():
+        print("\nNOME JÁ EXISTENTE, DESEJA SOBREPOR?")
+        intencao = verificaIntencao()
+    else:
+        cadastraNota(d, nm_aluno)
+
+    return intencao
 
 def cadastraAluno(d: dict) -> None:
     """ 1 - Cadastra o aluno e a sua nota """
@@ -101,8 +114,6 @@ def cadastraAluno(d: dict) -> None:
 
         if intencao:
             cadastraNota(d, nm_aluno)
-        else:
-            print("\nAÇÃO INTERROMPIDA")
     else:
         cadastraNota(d, nm_aluno)
 
@@ -111,10 +122,9 @@ def editarAluno(d: dict) -> None:
     def acao_se_nao_vazio():
         listarAlunos(d)
 
-        nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA EDITAR: ")
-        aluno_existe = verificaAluno(d, nm_aluno)
+        nm_aluno = inputNomeAluno(" DIGITE O NOME DO ALUNO QUE DESEJA EDITAR: ")
 
-        if aluno_existe:
+        if nm_aluno in d:
             print("\nDESEJA MUDAR O NOME DO ALUNO?")
             intencao = verificaIntencao()
 
@@ -138,10 +148,10 @@ def listarAlunos(d: dict) -> None:
     def acao_se_nao_vazio():
         num_tabs = 4
         print("\nALUNOS" + "\t" * num_tabs + "NOTAS")
-        print("=" * 30)
+        print("=" * 40)
         for nome, nota in d.items():
             print(f"{nome}" + "\t" * num_tabs + f"{nota}")
-        print("=" * 30)
+        print("=" * 40)
 
     def acao_se_vazio():
         print("\nNÃO HÁ ALUNOS REGISTRADOS PARA EXIBIÇÃO")
@@ -188,9 +198,9 @@ def consultarAluno(d: dict) -> None:
         listarAlunos(d)
 
         nm_aluno = inputNomeAluno("DIGITE O NOME DO ALUNO QUE DESEJA CONSULTAR: ")
-        aluno_existe = verificaAluno(d, nm_aluno)
 
-        if aluno_existe:
+        if nm_aluno in d:
+            systems.lineSystem()
             num_tabs = 4
             print("\nALUNO" + "\t" * num_tabs + "NOTA")
             print("=" * 25)
